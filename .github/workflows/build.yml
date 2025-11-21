@@ -1,0 +1,38 @@
+name: CepList APK Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Flet
+      run: |
+        pip install flet
+        pip install -r requirements.txt
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+
+    - name: Build APK
+      run: flet build apk --project "CepList" --org "com.novus.ceplist" --product "CepList"
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: CepList-Android-App
+        path: build/apk/app-release.apk
